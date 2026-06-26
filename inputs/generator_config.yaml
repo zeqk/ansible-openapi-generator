@@ -13,8 +13,8 @@ definitions:
       check_filter_key: "workspace_id"
 
 collections:
-  - namespace: databasus
-    name: core
+  - namespace: zeqk
+    name: databasus
     version: 1.0.0
     modules:
 
