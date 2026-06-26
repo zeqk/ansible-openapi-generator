@@ -119,7 +119,6 @@ class Generator:
         """
         return os.path.join(
             output_dir,
-            "ansible_collections",
             self.collection_namespace,
             self.collection_name,
         )
