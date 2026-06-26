@@ -38,6 +38,7 @@ class ApiSpecParser:
                     continue
 
                 model_schema = None
+                # OpenAPI 3.0: requestBody
                 request_body_schema = (
                     operation.get("requestBody", {})
                     .get("content", {})
@@ -56,6 +57,23 @@ class ApiSpecParser:
                             return None
                     else:
                         model_schema = request_body_schema
+                else:
+                    # Swagger 2.0: body parameter in 'parameters' array
+                    for param in operation.get("parameters", []):
+                        if param.get("in") == "body":
+                            body_schema = param.get("schema", {})
+                            schema_ref = body_schema.get("$ref")
+                            if schema_ref:
+                                try:
+                                    model_schema = self.get_schema_by_ref(schema_ref)
+                                except ValueError as e:
+                                    self.collector.add_error(
+                                        f"For operation '{operation_id}': {e}"
+                                    )
+                                    return None
+                            elif body_schema:
+                                model_schema = body_schema
+                            break
 
                 return ApiOperation(
                     path=path,
